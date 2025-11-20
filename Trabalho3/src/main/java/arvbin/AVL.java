@@ -1,5 +1,6 @@
 package arvbin;
 
+import lista.ILista;
 import lista.LSE;
 
 import java.util.Comparator;
@@ -126,11 +127,12 @@ public class AVL<T, K> implements IABB<T, K> {
     }
 
     private void visitarNivelComAltura(No r, int nivelDesejado, int nivelAtual, Visitante<T> visitante) {
-        //se chegar num no vazio
-        if (r == null){
+        //se chegar num no vazio ou se ja passou do nível desejado, para a busca
+        if (r == null || nivelAtual > nivelDesejado){
             return;
         }
 
+        //vai visitando todos os niveis da arvore e compara com o desejado
         if (nivelAtual == nivelDesejado) {
             visitante.visita(r.item);
             return;
@@ -143,21 +145,205 @@ public class AVL<T, K> implements IABB<T, K> {
 
     public LSE<T> menorCaminho(T a, T b){
 
-        return null;
+        LSE<T> resultado = new LSE<>();
+        //se nao existirem os itens na arvore, lista nula
+        if (!contem(a) || !contem(b))
+            return resultado;
+
+        //comparar as keys
+        K keyA = recuperaChave.apply(a);
+        K keyB = recuperaChave.apply(b);
+        if (comparador.compare(keyA, keyB) == 0){
+            resultado.inserirFim(a);
+            return resultado;
+        }
+
+        //caminho ate a
+        LSE<T> caminhoA = new LSE<>();
+        buscarCaminho(raiz, keyA, caminhoA);
+
+        System.out.println(caminhoA);
+
+        //caminho ate b
+        LSE<T> caminhoB = new LSE<>();
+        buscarCaminho(raiz, keyB, caminhoB);
+
+        System.out.println(caminhoB);
+
+        T lca = encontrarLCA(caminhoA, caminhoB);
+
+        criaCaminho(caminhoA, caminhoB, lca, resultado);
+
+        return resultado;
+
     }
 
     public String codigo(T a){
 
-        return "";
+        if (!contem(a))
+            return null;
+
+        K keyA = recuperaChave.apply(a);
+        String codigo = "";
+
+        codigo = buscarCodigo(raiz, keyA);
+        return codigo;
     }
 
     public MaiorSoma maxSoma(){
 
-
-        return null;
+        return maxSomaRecursivo(raiz);
     }
 
+    /**
+     *
+     * @param r raiz atual
+     * @param key chave do item T
+     * @param caminho caminho ate T que sera atualizado ao longo das chamdas
+     */
+    private void buscarCaminho(No r, K key, LSE<T> caminho){
 
+        if (r == null)
+            return;
+
+        caminho.inserirFim(r.item);
+
+        int cmp = comparador.compare(key, recuperaChave.apply(r.item));
+        if (cmp == 0)
+            return;
+
+        else if (cmp < 0)
+            buscarCaminho(r.esq, key, caminho);
+
+        else
+            buscarCaminho(r.dir, key, caminho);
+    }
+
+    /**
+     * encontrar o menor LCA, para que seja possivel definir um caminho de
+     * A ate B
+     * @param camA caminho feito para chegar ate o No do item A
+     * @param camB caminho feito para chegar ate o No do item B
+     * @return retorna o Lowest Common Ancestor (menor ancestral comum)
+     */
+    private T encontrarLCA(LSE<T> camA, LSE<T> camB) {
+
+        //procurar ate a lista de menor qtd
+        int n = Math.min(camA.quantidade(), camB.quantidade());
+
+        T noA, noB;
+        K keyA,keyB;
+
+        T lca = null;
+
+        for (int i = 0; i<n; i++){
+            noA = camA.getItem(i);
+            noB = camB.getItem(i);
+
+            keyA = recuperaChave.apply(noA);
+            keyB = recuperaChave.apply(noB);
+
+            int cmp = comparador.compare(keyA, keyB);
+
+            //diferentes
+            if(cmp !=0)
+                break;
+
+            lca = noA;
+        }
+        return lca;
+    }
+
+    private void criaCaminho(LSE<T> caminhoA, LSE<T> caminhoB, T lca, LSE<T> resultado) {
+        K keyLCA = recuperaChave.apply(lca);
+
+        //for para chegar ate o LCA
+        int indiceLCA = -1;
+        for (int i = 0; i < caminhoA.quantidade(); i++) {
+            T item = caminhoA.getItem(i);
+            if (comparador.compare(recuperaChave.apply(item), keyLCA) == 0) {
+                indiceLCA = i;
+                break;
+            }
+        }
+
+        // Adiciona do caminho A ate lca (invertido) sem add lca
+        for (int i = caminhoA.quantidade() - 1; i > indiceLCA; i--) {
+            resultado.inserirFim(caminhoA.getItem(i));
+        }
+
+
+        //Adiciona de LCA ate B (so comeca a add quando achar o lca)
+        boolean passouLCA = false;
+
+        for (int i = 0; i < caminhoB.quantidade(); i++) {
+
+            T item = caminhoB.getItem(i);
+            //quando chegar no LCA, passou vira true e comeca a add na lista resultante
+            if (comparador.compare(recuperaChave.apply(item), keyLCA) == 0) {
+                passouLCA = true;
+            }
+            if (passouLCA){
+                resultado.inserirFim(item);
+            }
+        }
+    }
+
+    /**
+     * o metodo eh muito semelhante com o de buscar caminho
+     * mas a cada comparacao (ida para a esquerda e direita)
+     * ele adiciona um 0 ou 1 caso va para o caminho esq ou dir
+     * (metodo recursivo)
+     * @param r no atual
+     * @param key key do item <T>e para comparacao
+     * @return String com o codigo para o caminho do item <T>e
+     */
+    private String buscarCodigo(No r, K key){
+
+        if (r == null)
+            return "";
+
+        int cmp = comparador.compare(key, recuperaChave.apply(r.item));
+        if (cmp == 0)
+            return "";
+
+        else if (cmp < 0) {
+            return "0" + buscarCodigo(r.esq, key);
+        }
+
+        else {
+            return "1" + buscarCodigo(r.dir, key);
+        }
+    }
+    private MaiorSoma maxSomaRecursivo(No r) {
+        //no nulo
+        if (r == null) {
+            return new MaiorSoma("", 0);
+        }
+
+        //se o item do no atual nao for um inteiro
+        if (!(r.item instanceof Integer)) {
+            throw new UnsupportedOperationException("O metodo maxSoma aceita apenas arvores de inteiros.");
+        }
+        int valorNoAtual = (Integer) r.item;
+
+        //folha (sem filhos) retorna o valor da folha
+        if (r.esq == null && r.dir == null) {
+            return new MaiorSoma("", valorNoAtual);
+        }
+
+        // calcula a maior soma a esquerda e a direita
+        MaiorSoma esquerda = maxSomaRecursivo(r.esq);
+        MaiorSoma direita = maxSomaRecursivo(r.dir);
+
+        // Decide qual dos lados deu a maior soma
+        if (esquerda.valor >= direita.valor) {
+            return new MaiorSoma("E" + esquerda.caminho, valorNoAtual + esquerda.valor);
+        }
+        else {
+            return new MaiorSoma("D" + direita.caminho, valorNoAtual + direita.valor);
+        }
+    }
     private No inserir(No r, T e, K key) {
         if (r == null) {
             // Encontrou a posição

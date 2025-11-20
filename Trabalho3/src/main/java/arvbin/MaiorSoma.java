@@ -8,4 +8,13 @@ public class MaiorSoma {
         this.caminho = caminho;
         this.valor = valor;
     }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("MaiorSoma{");
+        sb.append("caminho='").append(caminho).append('\'');
+        sb.append(", valor=").append(valor);
+        sb.append('}');
+        return sb.toString();
+    }
 }
