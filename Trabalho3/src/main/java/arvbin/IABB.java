@@ -1,5 +1,7 @@
 package arvbin;
 
+import lista.LSE;
+
 import java.util.function.Predicate;
 
 /**
@@ -100,4 +102,40 @@ public interface IABB<T, K> {
      * @param visitante Visitante do nó
      */
     void emOrdemInvertida(Visitante<T> visitante);
+
+	/**
+	 * o metodo recebe um
+	 * valor inteiro n (n ≥ 0) e um visitante
+	 * e deve visitar, da esquerda para a direita, todos os
+	 * itens dos nós nível n. Se o nível n não existir, deverá
+	 * ser impresso "Nível não existe".
+	 */
+	void nivel(int n, Visitante<T> visitante);
+
+	/**
+	 * o metodo recebe dois itens a e b da árvore
+	 * e deve retornar uma lista encadeada de itens com o
+	 * menor caminho saindo de a e chegando até b
+	 * (a lista deverá estar na ordem que o caminho deve ser seguido).
+	 * Se a ou b não existirem, o metodo deverá retornar uma lista vazia.
+	 * Se a = b, o metodo deverá retornar uma lista somente com a.
+	 */
+	LSE<T> menorCaminho(T a, T b);
+
+	/**
+	 * o metodo deve retornar uma string com o código do item a
+	 * ou nulo, se a não existe. O código é formado por 0s e 1s,
+	 * onde 0 significa caminhar para a SAE e 1 representa caminhar para a SAD.
+	 */
+	String codigo(T a);
+
+	/**
+	 * assumindo uma árvore de valores inteiros, o metodo deve
+	 * retornar um objeto da classe MaiorSoma com o caminho da raiz até um
+	 * nó folha de maior somatório e o valor do somatório. O caminho deve ser
+	 * formado pelas letras ‘E’ e ‘D’, indicando o percurso da raiz até a folha.
+	 */
+
+	MaiorSoma maxSoma();
 }
+

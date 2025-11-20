@@ -1,5 +1,7 @@
 package arvbin;
 
+import lista.LSE;
+
 import java.util.Comparator;
 import java.util.function.Function;
 
@@ -112,6 +114,49 @@ public class AVL<T, K> implements IABB<T, K> {
     public void emOrdemInvertida(Visitante<T> visitante) {
         emOrdemInvertida(raiz, visitante);
     }
+
+    public void nivel(int n, Visitante<T> visitante){
+        //se a arvore estiver vazia || se o nivel nao existe || ""
+        if (raiz == null || n < 0 || n > raiz.h) {
+            System.out.println("Nivel nao existe");
+            return;
+        }
+
+        visitarNivelComAltura(raiz, n, 0, visitante);
+    }
+
+    private void visitarNivelComAltura(No r, int nivelDesejado, int nivelAtual, Visitante<T> visitante) {
+        //se chegar num no vazio
+        if (r == null){
+            return;
+        }
+
+        if (nivelAtual == nivelDesejado) {
+            visitante.visita(r.item);
+            return;
+        }
+
+        // visita primeiro a esquerda,depois pra direita
+        visitarNivelComAltura(r.esq, nivelDesejado, nivelAtual + 1, visitante);
+        visitarNivelComAltura(r.dir, nivelDesejado, nivelAtual + 1, visitante);
+    }
+
+    public LSE<T> menorCaminho(T a, T b){
+
+        return null;
+    }
+
+    public String codigo(T a){
+
+        return "";
+    }
+
+    public MaiorSoma maxSoma(){
+
+
+        return null;
+    }
+
 
     private No inserir(No r, T e, K key) {
         if (r == null) {
