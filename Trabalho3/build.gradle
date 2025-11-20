@@ -1,0 +1,39 @@
+plugins {
+    id 'application'
+}
+
+group = 'org.unirio.bsi.ed'
+version = '1.0.0'
+
+application {
+    mainClass = "main.Main"
+}
+
+run {
+    standardInput = System.in
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation platform('org.junit:junit-bom:5.10.0')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+jar {
+    manifest {
+        attributes (
+                'Main-Class': 'main.Main'
+        )
+        attributes(
+                'Class-Path': configurations.runtimeClasspath.collect { it.getName() }.join(' ')
+        )
+    }
+}
+
+test {
+    useJUnitPlatform()
+}
