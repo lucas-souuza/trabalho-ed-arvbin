@@ -161,14 +161,15 @@ public class AVL<T, K> implements IABB<T, K> {
         //caminho ate a
         LSE<T> caminhoA = new LSE<>();
         buscarCaminho(raiz, keyA, caminhoA);
-
-        System.out.println(caminhoA);
+//        debug
+//        System.out.println(caminhoA);
 
         //caminho ate b
         LSE<T> caminhoB = new LSE<>();
         buscarCaminho(raiz, keyB, caminhoB);
 
-        System.out.println(caminhoB);
+//        debug
+//        System.out.println(caminhoB);
 
         T lca = encontrarLCA(caminhoA, caminhoB);
 

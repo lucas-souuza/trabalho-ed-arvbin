@@ -32,7 +32,7 @@ public class Main {
         System.out.println();
         arvore2.nivel(4, (T) -> System.out.print(T + " "));
 
-        System.out.println(arvore2.menorCaminho(24, 28));
+        System.out.println(arvore2.menorCaminho(45, 62));
 
         System.out.println(arvore2.codigo(37));System.out.println(arvore2.codigo(30));
         System.out.println(arvore2.codigo(60));
@@ -47,6 +47,8 @@ public class Main {
         arvore1.inserir(40);arvore1.inserir(48);
         arvore1.inserir(51);arvore1.inserir(53);arvore1.inserir(47);
         arvore1.inserir(49);
+
+        System.out.println(arvore1);
 
         System.out.println(arvore1);
 
